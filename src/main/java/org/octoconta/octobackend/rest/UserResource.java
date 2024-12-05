@@ -2,6 +2,7 @@ package org.octoconta.octobackend.rest;
 
 import jakarta.validation.Valid;
 import org.octoconta.octobackend.dto.UserDTO;
+import org.octoconta.octobackend.dto.UserLogInDTO;
 import org.octoconta.octobackend.service.AuthService;
 import org.octoconta.octobackend.service.CategoryService;
 import org.springframework.http.HttpStatus;
@@ -25,5 +26,15 @@ public class UserResource {
         return new ResponseEntity<>(newUserId, HttpStatus.CREATED);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<Long> login(@RequestBody UserLogInDTO userLogInDTO) {
+        Long userId = authService.logIn(userLogInDTO.getEmail(), userLogInDTO.getPassword());
+        return new ResponseEntity<>(userId, HttpStatus.OK);
+    }
 
+    @GetMapping("/{email}")
+    public ResponseEntity<Long> getIdByEmail(@PathVariable(name = "email") final String email) {
+        final Long userId = authService.getIdByEmail(email);
+        return new ResponseEntity<>(userId, HttpStatus.OK);
+    }
 }

@@ -1,14 +1,17 @@
 package org.octoconta.octobackend.service;
 
+import org.aspectj.weaver.ast.Not;
 import org.octoconta.octobackend.domain.User;
 import org.octoconta.octobackend.dto.CategoryDTO;
 import org.octoconta.octobackend.dto.UserDTO;
 import org.octoconta.octobackend.repos.CategoryRepository;
 import org.octoconta.octobackend.repos.UserRepository;
+import org.octoconta.octobackend.util.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -47,6 +50,22 @@ public class AuthService {
        }
 
         return userId;
+    }
+
+    public Long getIdByEmail(String email) {
+        // Find the user by email
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found"));
+        return user.getUserId();
+    }
+
+    public Long logIn(String email, String password) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (user.getPassword().equals(password)) {
+            return user.getUserId();
+        } else {
+            throw new NotFoundException("Invalid password");
+        }
     }
 
     private UserDTO mapToDTO(final User user, final UserDTO userDTO) {

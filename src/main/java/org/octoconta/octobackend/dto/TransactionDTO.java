@@ -25,6 +25,10 @@ public class TransactionDTO {
     private Long user;
     private Long category;
 
+    private String categoryIcon;
+    private String categoryColor;
+
+
     // getters and setters
     public Long getTransactionId() {
         return transactionId;
@@ -82,5 +86,18 @@ public class TransactionDTO {
         this.category = category;
     }
 
+    public String getCategoryIcon(){
+        return categoryIcon;
+    }
+    public void setCategoryIcon(final String categoryIcon){
+        this.categoryIcon = categoryIcon;
+    }
+
+    public String getCategoryColor(){
+        return categoryColor;
+    }
+    public void setCategoryColor(final String categoryColor){
+        this.categoryColor = categoryColor;
+    }
 
 }

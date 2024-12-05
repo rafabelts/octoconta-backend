@@ -1,6 +1,7 @@
 package org.octoconta.octobackend.repos;
 
 import org.octoconta.octobackend.domain.Category;
+import org.octoconta.octobackend.domain.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

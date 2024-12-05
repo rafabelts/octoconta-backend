@@ -8,6 +8,7 @@ import org.octoconta.octobackend.repos.CategoryRepository;
 import org.octoconta.octobackend.repos.TransactionRepository;
 import org.octoconta.octobackend.repos.UserRepository;
 import org.octoconta.octobackend.util.NotFoundException;
+import org.octoconta.octobackend.util.ReferencedWarning;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,11 +33,25 @@ public class TransactionService {
         return transactionRepository.save(transaction).getTransactionId();
     }
 
+    public void update(final Long transactionId, final TransactionDTO transactionDTO, Long userId, Long categoryId) {
+        final Transaction transaction = transactionRepository.findById(transactionId).orElseThrow(NotFoundException::new);
+
+        mapToEntity(transactionDTO, transaction, userId, categoryId);
+
+        transactionRepository.save(transaction);
+    }
+
+    public void delete(final Long transactionId){
+        final Transaction transaction = transactionRepository.findById(transactionId).orElseThrow(() -> new NotFoundException("Category not found"));
+
+        transaction.setIsActive(false);
+    }
+
     public List<TransactionDTO> getUserTransactions(Long userId){
         final List<Transaction> transactions = transactionRepository.findByUser_UserId(userId);
 
         return transactions.stream().map(
-                transaction -> mapToDTO(transaction, new TransactionDTO(), userId, transaction.getCategory().getCategoryId())
+                transaction -> mapToDTO(transaction, new TransactionDTO(), userId, transaction.getCategory().getCategoryId(), transaction.getCategory().getIcon(), transaction.getCategory().getColor())
         ).collect(Collectors.toList());
     }
 
@@ -44,11 +59,11 @@ public class TransactionService {
         final List<Transaction> transactions = transactionRepository.findByUser_UserIdAndCategory_CategoryId(userId, categoryId);
 
         return transactions.stream().map(
-                transaction -> mapToDTO(transaction, new TransactionDTO(), userId, categoryId)
+                transaction -> mapToDTO(transaction, new TransactionDTO(), userId, categoryId, transaction.getCategory().getIcon(), transaction.getCategory().getColor())
         ).collect(Collectors.toList());
     }
 
-    private TransactionDTO mapToDTO(final Transaction transaction, final TransactionDTO transactionDTO, final Long userId, final Long categoryId) {
+    private TransactionDTO mapToDTO(final Transaction transaction, final TransactionDTO transactionDTO, final Long userId, final Long categoryId, final String categoryIcon, final String categoryColor) {
         transactionDTO.setTransactionId(transaction.getTransactionId());
         transactionDTO.setTitle(transaction.getTitle());
         transactionDTO.setAmount(transaction.getAmount());
@@ -57,6 +72,8 @@ public class TransactionService {
         transactionDTO.setUser(userId);
         transactionDTO.setCategory(categoryId);
         transactionDTO.setIsActive(transaction.getIsActive());
+        transactionDTO.setCategoryIcon(categoryIcon);
+        transactionDTO.setCategoryColor(categoryColor);
 
         return transactionDTO;
     }
@@ -75,5 +92,12 @@ public class TransactionService {
         transaction.setCategory(category);
 
         return transaction;
+    }
+
+    public ReferencedWarning getReferencedWarning(final Long transactionId) {
+        final ReferencedWarning referencedWarning = new ReferencedWarning();
+        final Transaction transaction = transactionRepository.findById(transactionId).orElseThrow(NotFoundException::new);
+
+       return null;
     }
 }
