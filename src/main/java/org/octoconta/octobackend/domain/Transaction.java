@@ -38,6 +38,7 @@ public class Transaction {
     private String type;
 
 
+    @CreatedDate
     @Column
     private OffsetDateTime date;
 
